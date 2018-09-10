@@ -1,0 +1,185 @@
+<!doctype html>
+<html>
+  <head>
+    <title> App Solares</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+
+  </head>
+  <body>
+    <header>
+
+    	<div class="container-fluid" style="background-color: #050758">
+    			<b><p class="text-warning" style="font-size: 3em"> 
+			  					#BrilhaSolares
+			  				</p></b>
+
+			<div class="row">
+				<div>
+			  				<p class="text-white px-3" style="font-size: 2em" id="vel">
+			  					Velocidade Atual
+			  					00.00 
+			  				</p><p class="text-white px-3" style="font-size: 2em">
+			  					Velocidade Ótima
+			  					00.00
+			  				</p>
+				</div>
+				<div class="px-5">
+					<form name="form">
+							<h3 style="text-align: center">
+								<input name="btnCronometro" value = "Iniciar" type="button" class="btn-warning" onclick="nome();"/>
+									<br />
+								<input style="text-align: center;" type="text" name="cronometro" value="00:00:00" />
+								<br />
+							</h3>
+						</form>
+			</div>
+
+				<div class="row">
+	  					<div class="col-6 col-sm-6 p-2">
+
+	  						<iframe width="450" height="260" style="border: 1px solid #cccccc;" src="https://thingspeak.com/channels/570781/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15"></iframe>		
+	  		
+	  						<iframe width="450" height="260" style="border: 1px solid #cccccc;" src="https://thingspeak.com/channels/570793/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15"></iframe>
+	  					</div>
+
+	  					<div class="col-6 col-sm-6 p-2">
+
+	  						<iframe width="450" height="260" style="border: 1px solid #cccccc;" src="https://thingspeak.com/channels/570794/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15"></iframe>
+
+	  						<iframe width="450" height="260" style="border: 1px solid #cccccc;" src="https://thingspeak.com/channels/572100/charts/1?bgcolor=%23ffffff&color=%23d62020&dynamic=true&results=60&type=line&update=15"></iframe>
+	  					</div>
+
+	  				</div>
+	  			</div>
+			</div>
+		</div>
+     
+	</header>
+ </body>
+
+</html>
+
+<script async defer
+   		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD322fL2nZsl-HG3EvVR9sgulFLjIejs6U&callback=initMap">
+    	//Key API Google Maps
+	</script>
+
+	<script async defer
+   		src="https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyD322fL2nZsl-HG3EvVR9sgulFLjIejs6U&callback=myMap">
+    	//Key API Google Maps Geolocation
+	</script>
+
+	<script type="text/javascript" language="JavaScript">
+		function pegaGeoLocal() {
+	        // Try HTML5 geolocation.
+	        if (navigator.geolocation) {
+	          	navigator.geolocation.getCurrentPosition(function(position) {
+	            	var pos = {
+	              		lat: position.coords.latitude,
+	             		lng: position.coords.longitude
+	            };
+	          }, function() {
+	            handleLocationError(true, infoWindow, map.getCenter());
+	          });
+	        } 
+	        else {
+	          // Browser doesn't support Geolocation
+	          handleLocationError(false, infoWindow, map.getCenter());
+        	}
+        }
+
+	    function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        	infoWindow.setPosition(pos);
+        	infoWindow.setContent(browserHasGeolocation ?
+                              'Error: The Geolocation service failed.' :
+                              'Error: Your browser doesn\'t support geolocation.');
+      	}
+
+
+      	//Velocidade a partir da distancia entre pontos / tempo.
+	    function velocidade(){
+	      	var oldLocal;
+	      	var newLocal;
+	      	var velocidade = 0;
+
+	      	oldLocal = newLocal;
+	      	newLocal = pegaGeoLocal();
+
+	      	velocidade = (newLocal - oldLocal)/3;
+
+	      	var div = document.getElementById("vel");
+	      	div.innerHTML = "<h2> Velocidade Atual: " + velocidade + "</h2>";
+	      	//https://www.devmedia.com.br/como-utilizar-a-google-geocoding-api-para-obter-enderecos/36751
+
+	      	setInterval('Velocidade', 3000);
+	    }
+
+
+   		window.onload = velocidade();
+		 
+		var segundo = 0+"0";
+		var minuto = 0+"0";
+		var hora = 0+"0";
+		var contagem;
+		contagemIniciada = 0;
+
+		//função de cronômetro progressivo
+		function Cronometro(){
+
+			if(contagemIniciada==0){
+				if (segundo < 59){
+					segundo++
+					if(segundo < 10){segundo = "0"+segundo}
+				}else 
+					if(segundo == 59 && minuto < 59){
+					   segundo = 0+"0";
+						minuto++;
+						if(minuto < 10){minuto = "0"+minuto}
+					}
+				if(minuto == 59 && segundo == 59 && hora < 23){
+					segundo = 0+"0";
+					minuto = 0+"0";
+					hora++;
+					if(hora < 10){hora = "0"+hora}
+				}else 
+					if(minuto == 59 && segundo == 59 && hora == 23){
+						segundo = 0+"0";
+						minuto = 0+"0";
+						hora = 0+"0";
+					}
+				form.cronometro.value = hora +":"+ minuto +":"+ segundo
+			}
+		}
+
+		//função chamada ao clicar no botão de iniciar/resetar o cronômetro
+		function nome(){
+			segundo = 0+"0";
+			minuto = 0+"0";
+			hora = 0+"0";
+
+			//troca nome do botão do cronômetro e inicia contagem
+			if(form.btnCronometro.value == "Iniciar"){
+				form.cronometro.value = "00:00:00"
+				contagemIniciada=0
+				contagem = setInterval('Cronometro()', 983)
+				form.btnCronometro.value = "Resetar"
+			}
+			//retroca o nome do botão do cronômetro, para e reseta a contagem
+			else{
+				contagemIniciada=1	
+				form.cronometro.value = "00:00:00"
+				clearInterval(contagem)
+				form.btnCronometro.value = "Iniciar"
+			}
+		}
+	</script>
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+
+ 
